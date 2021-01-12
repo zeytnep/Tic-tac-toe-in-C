@@ -11,7 +11,7 @@ EMAIL: zeyneperdogru99@gmail.com
 
 /* The function goes through the entire table and set the init variable in each structure to 0.
  * This indicates that elements of the hashtable is empty.
-*/
+ */
 void init_boards() {
     for (int i = 0; i< HSIZE; i++) htable[i].init = 0;
 }
@@ -101,48 +101,90 @@ void join_graph( Board board ) {
     }  
 }
 
-int recursion(int i) {
-    for (int j=0; j<9; j++) {
-        if (htable[htable[i].move[j]].winner != '?') {
-            if (htable[htable[i].move[j]].winner == 'X') {
-                return 1;
-            }
-            else if (htable[htable[i].move[j]].winner == 'O') {
-                return -1;
-            }
-            else if (htable[htable[i].move[j]].winner == '-') {
-                return 0;
-            } 
-        }
-        else if (htable[i].move[j] != 1) {
-            if (htable[htable[i].move[j]].score > htable[i].score) {
-                htable[i].score =recursion(j);
-            }
-        }
-    }
-    return 0;
-}
+
 
 /*
- * Assign a score to each entry in the hash table that has an init value of 1.
- * Evaluate the nodes in order of decreasing depth.
+* Assign a score to each entry in the hash table that has an init value of 1.
+* Evaluate the nodes in order of decreasing depth.
 */
 void compute_score() {
-    for (int i =0; i<HSIZE; i++) {
-        if (htable[i].winner == 'X') {
+
+  for(int j = 9; j >= 0; j--) {
+    for(int i = 0; i < HSIZE; i++) {
+
+      if(htable[i].depth == j) {
+        if(htable[i].init == 1) {
+          if(htable[i].winner == 'X') {
             htable[i].score = 1;
+          } else if(htable[i].winner == 'O') {
+                htable[i].score = -1;
+          } else if(htable[i].winner == '-') {
+                htable[i].score = 0;
+          } else {
+                if(htable[i].turn == 'X') {
+                    htable[i].score = -1;
+                    for(int k = 0; k < 9; k++) {
+                        if(htable[htable[i].move[k]].init == 1) {
+                            if(htable[htable[i].move[k]].score > htable[i].score) {
+                                htable[i].score = htable[htable[i].move[k]].score;
+                            }
+                        }
+                    }
+                } else if(htable[i].turn == 'O') {
+                    htable[i].score = 1;
+                    for(int k = 0; k < 9; k++) {
+                        if(htable[htable[i].move[k]].init == 1) {
+                            if(htable[htable[i].move[k]].score < htable[i].score) {
+                                htable[i].score = htable[htable[i].move[k]].score;
+                            }
+                        }
+                    }
+                }
+            }
         }
-        else if (htable[i].winner == 'O') {
-            htable[i].score = -1;
-        }
-        else if (htable[i].winner == '-') {
-            htable[i].score = 0;
-        }
-        else if (htable[i].turn == 'X') {
-            htable[i].score = recursion(i);
-        }
-        else if (htable[i].turn == 'O') {
-            htable[i].score = recursion(i);
-        }
+      }
     }
+  }
+}
+
+/* Return the best possible move position. */
+int best_move(int board) {
+  int move1 = -1;
+  int move2 = -1;
+  int move3 = -1;
+
+  for(int i = 0; i < 9; i++) {
+
+    printf("%d: Score = %d   Hash = %d\n", i, htable[htable[board].move[i]].score, htable[board].move[i]);
+    if(htable[htable[board].move[i]].init == 1) {
+      if(htable[htable[board].move[i]].score == 1) {
+        move1 = i;
+      } else if(htable[htable[board].move[i]].score == 0) {
+            move2 = i;
+      } else if(htable[htable[board].move[i]].score == -1) {
+            move3 = i;
+      }
+    }
+  }
+  printf("Move1: %d\n", move1);
+  printf("Move2: %d\n", move2);
+  printf("Move3: %d\n", move3);
+  if(htable[board].turn == 'X') {
+    if(move1 != -1) {
+      return move1;
+    } else if(move2 != -1) {
+      return move2;
+    } else {
+      return move3;
+    }
+  } else {
+    if(move3 != -1) {
+      return move3;
+    } else if(move2 != -1) {
+        return move2;
+    } else {
+        return move1;
+    }
+  }
+
 }

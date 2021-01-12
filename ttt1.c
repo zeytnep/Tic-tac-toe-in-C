@@ -9,13 +9,13 @@ EMAIL: zeyneperdogru99@gmail.com
 #include <string.h>
 #include <stdio.h>
 
-// printable string that displays the initial board
+/* printable string that displays the initial board */
 Board START_BOARD = "0|1|2\n-+-+-\n3|4|5\n-+-+-\n6|7|8\n";
 
-// array that maps the playable positions to their indices in the board string
+/* array that maps the playable positions to their indices in the board string */
 int pos2idx[9] = { 0, 2, 4, 12, 14, 16, 24, 26, 28 };
 
-// array of row, column and diagonal positions
+/* array of row, column and diagonal positions */
 int WINS[8][3]  = {
                     {0,1,2}, // top row
                     {3,4,5}, // middle row
@@ -27,7 +27,7 @@ int WINS[8][3]  = {
                     {2,4,6}  // / diagonal
                   };
 
-// hash table of board nodes for graph
+/* hash table of board nodes for graph */
 struct BoardNode htable[HSIZE];
 
 
@@ -76,7 +76,3 @@ void print_node( struct BoardNode board_node ) {
   }
   printf( "**************************************************************\n" );
 }
-
-
-
-
