@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
   join_graph(START_BOARD);
   compute_score();
 
-  printf("X or O? ");
+  printf(" X or O ? ");
   fgets(input, MAX_INPUT, stdin);
   human = input[0];
 
